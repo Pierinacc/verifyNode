@@ -38,7 +38,7 @@ public class NodeDAO {
         Statement cs = null;
         ArrayList<Node> listNodes = new ArrayList<>() ;             
         String sqlString="select name from usrsms.nodes where status = 1 " +
-                    "and name like 'MWMKT%' order by group_id,id limit 1";
+                    "and name like 'MWMKT%' order by group_id,id";
         
         try{                                    
             cs = cn.createStatement();

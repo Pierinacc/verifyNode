@@ -41,6 +41,7 @@ public class VerifyNode {
     
     private static String enviarMensajeGET(String node) throws UnsupportedEncodingException {
         String mensaje = node+" llega a movistar";
+        mensaje = mensaje.replaceAll(" ","%20");
         String request= "http://54.208.99.218:8080/MES2App/sendSMS.jsp?mensaje="+mensaje
                 + "&numero=942393266&usuario="+node;
         String protocolo="HTTP";
