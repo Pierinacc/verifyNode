@@ -7,10 +7,12 @@ package dao;
 
 import entity.Node;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
@@ -58,6 +60,93 @@ public class NodeDAO {
             }            
         }        
         return listNodes;
+    }
+    
+    public int obtenerCodigoDeRespuesta(String nodo)throws SQLException{
+        
+        cn = Conexion.getInstancia().miConexion();
+        Statement cs = null;
+        int codigo = 0;
+        
+        String sqlString="select id from usrsms.incoming_message" +
+                            " where upper(node) = 'MOVISTAR'" +
+                            " and date_trunc('day', received_date) = CURRENT_DATE" +
+                            " and process_status  = 1" +
+                            " and txt_msg = '" + nodo.toUpperCase() + " llega a movistar";
+        
+        try{                                    
+            cs = cn.createStatement();
+            rs = cs.executeQuery(sqlString);
+            while (rs.next()) {                
+                codigo = rs.getInt("id");
+            }
+            
+        }catch(SQLException ex) {
+            logger.info((Object)("Error al obtener codigo de incoming messages: " + ex.getMessage()));
+        } finally {
+            cn.close();
+            if(cs != null){
+                cs.close();
+            }            
+        }        
+        return codigo;
+    }
+    
+    public boolean setearRespuestaComoLeida(int id) throws SQLException{
+        cn = Conexion.getInstancia().miConexion();
+        PreparedStatement ps=null;
+        int response=0;
+        try {
+            
+            String query = "update usrsms.incoming_message" +
+                            " set process_status = 2" +
+                            " where id = ?";
+            
+            ps = cn.prepareStatement(query);
+            ps.setInt(1, id);
+            response=ps.executeUpdate();
+
+        } catch (SQLException ex) {
+            logger.info((Object)("Error al actualizar a leido incoming messages: " + ex.getMessage()));
+        } finally {
+            cn.close();
+            if(ps != null){
+                ps.close();
+            }            
+        }
+        
+        if(response == 0){
+            return false;
+        }else{
+            return true;
+        }
+    }
+    
+    public List obtenerUsuariosSlack()throws SQLException{
+        
+        cn = Conexion.getInstancia().miConexion();
+        Statement cs = null;
+        List userSlack = new ArrayList<>();
+        
+        String sqlString="select username from usrsms.alert_users where status = 1 order by username;";
+        
+        try{
+            cs = cn.createStatement();
+            rs = cs.executeQuery(sqlString);
+            while (rs.next()) {
+                if(rs.getString(1).trim().length() > 0){
+                    userSlack.add(rs.getString(1));
+                }
+            }
+        }catch(SQLException ex) {
+            logger.info((Object)("Error al listar usuarios de alertas: " + ex.getMessage()));
+        } finally {
+            cn.close();
+            if(cs != null){
+                cs.close();
+            }            
+        }        
+        return userSlack;
     }
     
 }
