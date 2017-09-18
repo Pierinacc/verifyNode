@@ -72,7 +72,7 @@ public class NodeDAO {
                             " where upper(node) = 'MOVISTAR'" +
                             " and date_trunc('day', received_date) = CURRENT_DATE" +
                             " and process_status  = 1" +
-                            " and txt_msg = '" + nodo.toUpperCase() + " llega a movistar";
+                            " and txt_msg = '" + nodo.toUpperCase() + " llega a movistar'";
         
         try{                                    
             cs = cn.createStatement();

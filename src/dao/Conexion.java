@@ -44,7 +44,7 @@ public class Conexion {
     
     public void getCadenaConex(){
         try{
-            FileReader reader = new FileReader("C:/home/ubuntu/task/mes/taskmes.properties");
+            FileReader reader = new FileReader("/home/ubuntu/task/mes/taskmes.properties");
             prop = new Properties();
             prop.load(reader);
             url = prop.getProperty("mowa.url");
